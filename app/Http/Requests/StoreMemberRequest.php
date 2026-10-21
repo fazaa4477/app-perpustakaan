@@ -1,7 +1,7 @@
 <?php
-
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreMemberRequest extends FormRequest
@@ -35,7 +35,7 @@ class StoreMemberRequest extends FormRequest
             'nomor_telepon.required' => 'Nomor telepon wajib diisi.',
             'alamat.required' => 'Alamat wajib diisi.',
             'status.required' => 'Status wajib dipilih.',
-            'status.in' => 'Status harus aktif atau nonaktif.',
+            'status.in' => 'Status tidak valid.',
         ];
     }
 }

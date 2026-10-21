@@ -11,8 +11,9 @@ class MemberController extends Controller
     public function index(Request $request)
     {
         $members = Member::when($request->search, function ($query, $search) {
-            $query->where('nama', 'like', "%{$search}%");
-        })->paginate(10);
+                return $query->where('nama', 'like', "%{$search}%");
+            })
+            ->paginate(10);
 
         return view('members.index', compact('members'));
     }
@@ -34,11 +35,11 @@ class MemberController extends Controller
 
     public function show(string $id)
     {
-        $member = Member::findOrFail($id);
+        $member = Member::with(['loans.loanItems.book', 'loans.user'])->findOrFail($id);
 
         return view('members.show', compact('member'));
     }
-
+    
     public function edit(string $id)
     {
         $member = Member::findOrFail($id);
@@ -52,27 +53,17 @@ class MemberController extends Controller
 
         $validated = $request->validate([
             'nama' => 'required|string|max:100',
-            'nim' => 'required|string|max:20|unique:members,nim,' . $id,
-            'email' => 'required|email|max:100|unique:members,email,' . $id,
+            'nim' => 'required|string|max:20|unique:members,nim,'.$member->id,
+            'email' => 'required|email|max:100|unique:members,email,'.$member->id,
             'nomor_telepon' => 'required|string|max:15',
             'alamat' => 'required|string',
             'status' => 'required|in:aktif,nonaktif',
-        ], [
-            'nama.required' => 'Nama anggota wajib diisi.',
-            'nim.required' => 'NIM wajib diisi.',
-            'nim.unique' => 'NIM sudah digunakan oleh anggota lain.',
-            'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
-            'email.unique' => 'Email sudah digunakan oleh anggota lain.',
-            'nomor_telepon.required' => 'Nomor telepon wajib diisi.',
-            'alamat.required' => 'Alamat wajib diisi.',
-            'status.required' => 'Status wajib dipilih.',
         ]);
 
         $member->update($validated);
 
         return redirect()->route('members.index')
-            ->with('success', "Data anggota \"{$validated['nama']}\" berhasil diperbarui.");
+            ->with('success', "Anggota \"{$validated['nama']}\" berhasil diperbarui.");
     }
 
     public function destroy(string $id)
@@ -81,6 +72,6 @@ class MemberController extends Controller
         $member->delete();
 
         return redirect()->route('members.index')
-            ->with('success', 'Data anggota berhasil dihapus.');
+            ->with('success', 'Anggota berhasil dihapus.');
     }
 }
