@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use App\Models\Loan;
 use App\Models\Member;
-use App\Models\User;
+use App\Models\User; 
 use Illuminate\Http\Request;
 
 class LoanController extends Controller
@@ -19,6 +19,7 @@ class LoanController extends Controller
 
         return view('loans.index', compact('loans'));
     }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -26,9 +27,8 @@ class LoanController extends Controller
     {
         $members = Member::all();
         $books = Book::all();
-        $users = User::all();
 
-        return view('loans.create', compact('members', 'books', 'users'));
+        return view('loans.create', compact('members', 'books'));
     }
 
     /**
@@ -38,7 +38,6 @@ class LoanController extends Controller
     {
         $validated = $request->validate([
             'member_id' => 'required|integer|exists:members,id',
-            'user_id' => 'required|integer|exists:users,id',
             'tanggal_pinjam' => 'required|date',
             'tanggal_kembali' => 'required|date|after_or_equal:tanggal_pinjam',
             'book_ids' => 'required|array|min:1',
@@ -47,7 +46,7 @@ class LoanController extends Controller
 
         $loan = Loan::create([
             'member_id' => $validated['member_id'],
-            'user_id' => $validated['user_id'],
+            'user_id' => auth()->id(), // ← Diisi otomatis dari user yang sedang login
             'tanggal_pinjam' => $validated['tanggal_pinjam'],
             'tanggal_kembali' => $validated['tanggal_kembali'],
         ]);
@@ -58,7 +57,8 @@ class LoanController extends Controller
 
         return redirect()->route('loans.index')
             ->with('success', 'Transaksi peminjaman berhasil dibuat.');
-}
+    }
+
     /**
      * Display the specified resource.
      */

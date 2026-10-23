@@ -11,6 +11,7 @@
         .checkbox-list label { display: block; font-weight: normal; margin-top: 0; }
         .error { color: #b91c1c; font-size: 14px; margin-top: 4px; }
         .btn { margin-top: 20px; padding: 8px 16px; background: #2563eb; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+        .petugas-info { margin-top: 6px; font-size: 14px; color: #475569; }
     </style>
 </head>
 <body>
@@ -33,19 +34,10 @@
             <div class="error">{{ $message }}</div>
         @enderror
 
-        <label for="user_id">Petugas</label>
-        <select name="user_id" id="user_id">
-            <option value="">-- Pilih Petugas --</option>
-            @foreach ($users as $user)
-                <option value="{{ $user['id'] }}" @selected(old('user_id') == $user['id'])>
-                    {{ $user['name'] }}
-                </option>
-            @endforeach
-        </select>
-        @error('user_id')
-            <div class="error">{{ $message }}</div>
-        @enderror
-        <p><em>Catatan: dropdown petugas dipilih manual karena login belum ada - otomatis dari user yang login mulai Pertemuan 8.</em></p>
+        <label>Petugas Pencatat</label>
+        <div class="petugas-info">
+            <strong>{{ auth()->user()->name }}</strong> ({{ ucfirst(auth()->user()->role) }})
+        </div>
 
         <label for="tanggal_pinjam">Tanggal Pinjam</label>
         <input type="date" name="tanggal_pinjam" id="tanggal_pinjam" value="{{ old('tanggal_pinjam') }}">
