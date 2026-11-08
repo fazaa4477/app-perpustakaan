@@ -18,6 +18,10 @@ class DatabaseSeeder extends Seeder
         // Memanggil UserSeeder yang sudah kita buat
         $this->call([
             UserSeeder::class,
+            CategorySeeder::class,
+            BookSeeder::class,
+            MemberSeeder::class,
+            LoanSeeder::class,
         ]);
     }
 }
